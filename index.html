@@ -1,192 +1,194 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/cookie.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>タイピング・クッカー：デカスロン</title>
-    <meta name="description" content="究極の指先インクリメンタルゲーム。30秒×10ラウンドで銀河系を超えるクッキーを生産せよ！" />
-  </head>
-  <body>
-    <!-- パーティクルエフェクト用キャンバス -->
-    <canvas id="particles-canvas"></canvas>
 
-    <!-- メインアプリケーション -->
-    <div id="app" class="relative z-10">
-      <!-- タイトル画面 -->
-      <div id="title-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-8">
-        <h1 class="text-7xl font-black mb-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
-          タイピング・クッカー
-        </h1>
-        <p class="text-3xl font-bold text-cookie-300 mb-2">デカスロン</p>
-        <p class="text-xl text-white/70 mb-12">究極の指先インクリメンタル</p>
-        
-        <div class="glass p-8 max-w-2xl mb-8">
-          <h2 class="text-2xl font-bold mb-4">ゲームルール</h2>
-          <ul class="text-left space-y-2 text-white/80">
-            <li>• 30秒×10ラウンドでクッキーを生産</li>
-            <li>• タイピング速度と精度が全て</li>
-            <li>• ミスタイプでコンボリセット＆0.5秒フリーズ</li>
-            <li>• ラウンド間でショップとカードドラフト</li>
-            <li>• 10ラウンド後に転生して永続強化</li>
-          </ul>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/cookie.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>タイピング・クッカー：デカスロン</title>
+  <meta name="description" content="究極の指先インクリメンタルゲーム。30秒×10ラウンドで銀河系を超えるクッキーを生産せよ！" />
+</head>
 
-        <button id="start-game-btn" class="btn-primary text-2xl px-12 py-6">
-          ゲーム開始
-        </button>
+<body>
+  <!-- パーティクルエフェクト用キャンバス -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- メインアプリケーション -->
+  <div id="app" class="relative z-10">
+    <!-- タイトル画面 -->
+    <div id="title-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-8">
+      <h1
+        class="text-7xl font-black mb-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+        タイピング・クッカー
+      </h1>
+      <p class="text-3xl font-bold text-cookie-300 mb-2">デカスロン</p>
+      <p class="text-xl text-white/70 mb-12">究極の指先インクリメンタル</p>
+
+      <div class="glass p-8 max-w-2xl mb-8">
+        <h2 class="text-2xl font-bold mb-4">ゲームルール</h2>
+        <ul class="text-left space-y-2 text-white/80">
+          <li>• 30秒×10ラウンドでクッキーを生産</li>
+          <li>• タイピング速度と精度が全て</li>
+          <li>• ミスタイプでコンボリセット＆0.5秒フリーズ</li>
+          <li>• ラウンド間でショップとカードドラフト</li>
+          <li>• 10ラウンド後に転生して永続強化</li>
+        </ul>
       </div>
 
-      <!-- タイピングフェーズ画面 -->
-      <div id="typing-screen" class="hidden min-h-screen flex flex-col p-8">
-        <!-- ヘッダー情報 -->
-        <div class="flex justify-between items-center mb-8">
+      <button id="start-game-btn" class="btn-primary text-2xl px-12 py-6">
+        ゲーム開始
+      </button>
+    </div>
+
+    <!-- タイピングフェーズ画面 -->
+    <div id="typing-screen" class="hidden min-h-screen flex flex-col p-8">
+      <!-- ヘッダー情報 -->
+      <div class="flex justify-between items-center mb-8">
+        <div class="glass px-6 py-3">
+          <span class="text-sm text-white/60">ラウンド</span>
+          <span id="current-round" class="text-3xl font-bold ml-2">1</span>
+          <span class="text-white/60">/10</span>
+        </div>
+
+        <div class="glass px-6 py-3">
+          <span class="text-sm text-white/60">残り時間</span>
+          <span id="time-remaining" class="text-3xl font-bold ml-2">30</span>
+          <span class="text-white/60">秒</span>
+        </div>
+
+        <div class="glass px-6 py-3">
+          <span class="text-sm text-white/60">WPM</span>
+          <span id="wpm-display" class="text-3xl font-bold ml-2">0</span>
+        </div>
+      </div>
+
+      <!-- タイムバー -->
+      <div class="w-full bg-white/10 rounded-full h-4 mb-8 overflow-hidden">
+        <div id="time-bar" class="progress-bar" style="width: 100%"></div>
+      </div>
+
+      <!-- メインエリア -->
+      <div class="flex-1 flex flex-col items-center justify-center">
+        <!-- スコア表示 -->
+        <div class="mb-8">
+          <p class="text-sm text-white/60 mb-2">総生産数</p>
+          <p id="total-cookies" class="score-display">0</p>
+        </div>
+
+        <!-- 巨大クッキー -->
+        <div class="relative mb-12">
+          <div id="cookie-image"
+            class="w-64 h-64 rounded-full bg-gradient-to-br from-cookie-300 to-cookie-600 shadow-2xl animate-float">
+          </div>
+          <!-- クリティカルヒット表示 -->
+          <div id="critical-display" class="hidden absolute inset-0 flex items-center justify-center">
+            <span class="critical-hit">CRITICAL!</span>
+          </div>
+        </div>
+
+        <div class="glass px-12 py-8 mb-8 text-center">
+          <p id="word-display" class="word-display mb-2">
+            <span class="word-typed"></span><span class="word-untyped">Cookie</span>
+          </p>
+          <p id="romaji-display" class="text-2xl font-mono tracking-wider opacity-70"></p>
+        </div>
+
+        <!-- 入力フィールド（非表示だが入力を受け付ける） -->
+        <input type="text" id="typing-input" class="opacity-0 absolute" autocomplete="off" autocorrect="off"
+          autocapitalize="off" />
+
+        <!-- ステータス表示 -->
+        <div class="flex gap-8">
           <div class="glass px-6 py-3">
-            <span class="text-sm text-white/60">ラウンド</span>
-            <span id="current-round" class="text-3xl font-bold ml-2">1</span>
-            <span class="text-white/60">/10</span>
+            <span class="text-sm text-white/60">コンボ</span>
+            <span id="combo-display" class="text-2xl font-bold ml-2 text-yellow-400">0</span>
           </div>
-          
           <div class="glass px-6 py-3">
-            <span class="text-sm text-white/60">残り時間</span>
-            <span id="time-remaining" class="text-3xl font-bold ml-2">30</span>
-            <span class="text-white/60">秒</span>
+            <span class="text-sm text-white/60">倍率</span>
+            <span id="multiplier-display" class="text-2xl font-bold ml-2 text-green-400">1.0x</span>
           </div>
-
           <div class="glass px-6 py-3">
-            <span class="text-sm text-white/60">WPM</span>
-            <span id="wpm-display" class="text-3xl font-bold ml-2">0</span>
+            <span class="text-sm text-white/60">CpC</span>
+            <span id="cpc-display" class="text-2xl font-bold ml-2 text-blue-400">1</span>
           </div>
-        </div>
-
-        <!-- タイムバー -->
-        <div class="w-full bg-white/10 rounded-full h-4 mb-8 overflow-hidden">
-          <div id="time-bar" class="progress-bar" style="width: 100%"></div>
-        </div>
-
-        <!-- メインエリア -->
-        <div class="flex-1 flex flex-col items-center justify-center">
-          <!-- スコア表示 -->
-          <div class="mb-8">
-            <p class="text-sm text-white/60 mb-2">総生産数</p>
-            <p id="total-cookies" class="score-display">0</p>
-          </div>
-
-          <!-- 巨大クッキー -->
-          <div class="relative mb-12">
-            <div id="cookie-image" class="w-64 h-64 rounded-full bg-gradient-to-br from-cookie-300 to-cookie-600 shadow-2xl animate-float"></div>
-            <!-- クリティカルヒット表示 -->
-            <div id="critical-display" class="hidden absolute inset-0 flex items-center justify-center">
-              <span class="critical-hit">CRITICAL!</span>
-            </div>
-          </div>
-
-          <!-- 単語表示 -->
-          <div class="glass px-12 py-8 mb-8">
-            <p id="word-display" class="word-display">
-              <span class="word-typed"></span><span class="word-untyped">Cookie</span>
-            </p>
-          </div>
-
-          <!-- 入力フィールド（非表示だが入力を受け付ける） -->
-          <input 
-            type="text" 
-            id="typing-input" 
-            class="opacity-0 absolute" 
-            autocomplete="off" 
-            autocorrect="off" 
-            autocapitalize="off"
-          />
-
-          <!-- ステータス表示 -->
-          <div class="flex gap-8">
-            <div class="glass px-6 py-3">
-              <span class="text-sm text-white/60">コンボ</span>
-              <span id="combo-display" class="text-2xl font-bold ml-2 text-yellow-400">0</span>
-            </div>
-            <div class="glass px-6 py-3">
-              <span class="text-sm text-white/60">倍率</span>
-              <span id="multiplier-display" class="text-2xl font-bold ml-2 text-green-400">1.0x</span>
-            </div>
-            <div class="glass px-6 py-3">
-              <span class="text-sm text-white/60">CpC</span>
-              <span id="cpc-display" class="text-2xl font-bold ml-2 text-blue-400">1</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- ミスペナルティオーバーレイ -->
-        <div id="miss-overlay" class="hidden miss-penalty"></div>
-      </div>
-
-      <!-- ショップ画面 -->
-      <div id="shop-screen" class="hidden min-h-screen p-8">
-        <h2 class="text-5xl font-bold text-center mb-12">ショップ</h2>
-        
-        <div class="max-w-6xl mx-auto mb-8">
-          <div class="glass px-8 py-4 text-center">
-            <span class="text-sm text-white/60">所持クッキー</span>
-            <span id="shop-cookies" class="text-4xl font-bold ml-4 number-notation">0</span>
-          </div>
-        </div>
-
-        <div id="shop-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
-          <!-- ショップアイテムが動的に生成される -->
-        </div>
-
-        <div class="text-center">
-          <button id="shop-continue-btn" class="btn-primary text-xl px-10 py-4">
-            次へ進む
-          </button>
         </div>
       </div>
 
-      <!-- カードドラフト画面 -->
-      <div id="draft-screen" class="hidden min-h-screen p-8">
-        <h2 class="text-5xl font-bold text-center mb-4">カードドラフト</h2>
-        <p class="text-center text-white/70 mb-12">1枚選択してください（今回の周回のみ有効）</p>
+      <!-- ミスペナルティオーバーレイ -->
+      <div id="miss-overlay" class="hidden miss-penalty"></div>
+    </div>
 
-        <div id="draft-cards" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <!-- カードが動的に生成される -->
+    <!-- ショップ画面 -->
+    <div id="shop-screen" class="hidden min-h-screen p-8">
+      <h2 class="text-5xl font-bold text-center mb-12">ショップ</h2>
+
+      <div class="max-w-6xl mx-auto mb-8">
+        <div class="glass px-8 py-4 text-center">
+          <span class="text-sm text-white/60">所持クッキー</span>
+          <span id="shop-cookies" class="text-4xl font-bold ml-4 number-notation">0</span>
         </div>
       </div>
 
-      <!-- リザルト画面 -->
-      <div id="result-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-8">
-        <h2 class="text-6xl font-bold mb-12">10ラウンド完了！</h2>
+      <div id="shop-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
+        <!-- ショップアイテムが動的に生成される -->
+      </div>
 
-        <div class="glass p-12 max-w-4xl mb-8">
-          <div class="mb-8">
-            <p class="text-xl text-white/60 mb-2">総生産数</p>
-            <p id="result-total-cookies" class="text-7xl font-black number-notation bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">0</p>
-          </div>
-
-          <div class="grid grid-cols-2 gap-8 mb-8">
-            <div>
-              <p class="text-sm text-white/60">獲得ヘブンリーチップス</p>
-              <p id="result-chips" class="text-4xl font-bold text-yellow-400">+0</p>
-            </div>
-            <div>
-              <p class="text-sm text-white/60">平均WPM</p>
-              <p id="result-avg-wpm" class="text-4xl font-bold">0</p>
-            </div>
-            <div>
-              <p class="text-sm text-white/60">最高コンボ</p>
-              <p id="result-max-combo" class="text-4xl font-bold">0</p>
-            </div>
-            <div>
-              <p class="text-sm text-white/60">クリティカル回数</p>
-              <p id="result-critical-count" class="text-4xl font-bold">0</p>
-            </div>
-          </div>
-        </div>
-
-        <button id="prestige-btn" class="btn-primary text-2xl px-12 py-6">
-          転生する
+      <div class="text-center">
+        <button id="shop-continue-btn" class="btn-primary text-xl px-10 py-4">
+          次へ進む
         </button>
       </div>
     </div>
 
-    <script type="module" src="/src/main.js"></script>
-  </body>
+    <!-- カードドラフト画面 -->
+    <div id="draft-screen" class="hidden min-h-screen p-8">
+      <h2 class="text-5xl font-bold text-center mb-4">カードドラフト</h2>
+      <p class="text-center text-white/70 mb-12">1枚選択してください（今回の周回のみ有効）</p>
+
+      <div id="draft-cards" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <!-- カードが動的に生成される -->
+      </div>
+    </div>
+
+    <!-- リザルト画面 -->
+    <div id="result-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-8">
+      <h2 class="text-6xl font-bold mb-12">10ラウンド完了！</h2>
+
+      <div class="glass p-12 max-w-4xl mb-8">
+        <div class="mb-8">
+          <p class="text-xl text-white/60 mb-2">総生産数</p>
+          <p id="result-total-cookies"
+            class="text-7xl font-black number-notation bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            0</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8 mb-8">
+          <div>
+            <p class="text-sm text-white/60">獲得ヘブンリーチップス</p>
+            <p id="result-chips" class="text-4xl font-bold text-yellow-400">+0</p>
+          </div>
+          <div>
+            <p class="text-sm text-white/60">平均WPM</p>
+            <p id="result-avg-wpm" class="text-4xl font-bold">0</p>
+          </div>
+          <div>
+            <p class="text-sm text-white/60">最高コンボ</p>
+            <p id="result-max-combo" class="text-4xl font-bold">0</p>
+          </div>
+          <div>
+            <p class="text-sm text-white/60">クリティカル回数</p>
+            <p id="result-critical-count" class="text-4xl font-bold">0</p>
+          </div>
+        </div>
+      </div>
+
+      <button id="prestige-btn" class="btn-primary text-2xl px-12 py-6">
+        転生する
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
 </html>

@@ -271,10 +271,32 @@ class Game {
     document.querySelector('.word-typed').textContent = typed;
     document.querySelector('.word-untyped').textContent = remaining;
 
-    // ローマ字バッファ表示（入力中の文字）
-    if (buffer) {
-      document.querySelector('.word-untyped').textContent = `[${buffer}] ${remaining}`;
-    }
+    // ローマ字ガイドの描画
+    const romajiDisplay = document.getElementById('romaji-display');
+    const fullGuide = this.romajiEngine.fullRomajiGuide;
+    let romajiHTML = '';
+    let currentKanaPos = 0;
+
+    fullGuide.forEach((item, index) => {
+      if (currentKanaPos < progress.currentKanaIndex) {
+        // 既に入力済みのかな
+        romajiHTML += `<span class="text-green-400">${item.romaji}</span>`;
+      } else if (currentKanaPos === progress.currentKanaIndex) {
+        // 現在入力中のかな
+        const typedInBuffer = progress.currentRomajiBuffer;
+        if (typedInBuffer) {
+          romajiHTML += `<span class="text-green-400">${typedInBuffer}</span>`;
+          romajiHTML += `<span class="text-white/40">${item.romaji.substring(typedInBuffer.length)}</span>`;
+        } else {
+          romajiHTML += `<span class="text-white/40">${item.romaji}</span>`;
+        }
+      } else {
+        // 未入力のかな
+        romajiHTML += `<span class="text-white/40">${item.romaji}</span>`;
+      }
+      currentKanaPos += item.kana.length;
+    });
+    romajiDisplay.innerHTML = romajiHTML;
 
     // ステータス表示
     document.getElementById('combo-display').textContent = this.combo;

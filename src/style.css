@@ -1,94 +1,203 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen text-white;
+/* カスタムカラー */
+@theme {
+  --color-cookie-50: #fef9ee;
+  --color-cookie-100: #fdf2d7;
+  --color-cookie-200: #fae1ae;
+  --color-cookie-300: #f6ca7a;
+  --color-cookie-400: #f1a945;
+  --color-cookie-500: #ed8e20;
+  --color-cookie-600: #de7316;
+  --color-cookie-700: #b85814;
+  --color-cookie-800: #934518;
+  --color-cookie-900: #773a16;
+}
+
+/* 基本スタイル */
+body {
+  background: linear-gradient(to bottom right, rgb(17 24 39), rgb(88 28 135), rgb(17 24 39));
+  min-height: 100vh;
+  color: white;
+}
+
+/* パーティクルエフェクト用のキャンバス */
+#particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* グラスモーフィズム効果 */
+.glass {
+  background-color: rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+/* ボタンスタイル */
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(to right, var(--color-cookie-500), var(--color-cookie-600));
+  color: white;
+  font-weight: bold;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  transform: scale(1);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, var(--color-cookie-600), var(--color-cookie-700));
+  transform: scale(1.05);
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  background-color: rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(16px);
+  color: white;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transform: scale(1);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: rgb(255 255 255 / 0.2);
+  transform: scale(1.05);
+}
+
+/* カードスタイル */
+.card {
+  background-color: rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  padding: 1.5rem;
+  transform: scale(1);
+  transition: all 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+}
+
+/* スコア表示 */
+.score-display {
+  font-size: 3.75rem;
+  font-weight: bold;
+  background: linear-gradient(to right, rgb(251 191 36), rgb(249 115 22), rgb(239 68 68));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* タイピング単語表示 */
+.word-display {
+  font-size: 3rem;
+  font-family: monospace;
+  letter-spacing: 0.1em;
+}
+
+.word-typed {
+  color: rgb(74 222 128);
+}
+
+.word-untyped {
+  color: rgb(255 255 255 / 0.6);
+}
+
+/* プログレスバー */
+.progress-bar {
+  height: 1rem;
+  background: linear-gradient(to right, rgb(16 185 129), rgb(59 130 246));
+  border-radius: 9999px;
+  transition: all 0.1s;
+}
+
+.progress-bar-danger {
+  background: linear-gradient(to right, rgb(239 68 68), rgb(249 115 22));
+  animation: pulse 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* コンボ表示 */
+.combo-display {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: rgb(251 191 36);
+  animation: bounce 2s infinite;
+}
+
+/* クリティカルヒット演出 */
+.critical-hit {
+  font-size: 4.5rem;
+  font-weight: 900;
+  color: rgb(239 68 68);
+  animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+/* ミスタイプペナルティ */
+.miss-penalty {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(239 68 68 / 0.3);
+  pointer-events: none;
+  animation: pulse 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 数値表記 */
+.number-notation {
+  font-family: monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 画面振動エフェクト */
+.screen-shake {
+  animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+/* アニメーション定義 */
+@keyframes shake {
+
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
   }
 }
 
-@layer components {
-
-  /* パーティクルエフェクト用のキャンバス */
-  #particles-canvas {
-    @apply fixed top-0 left-0 w-full h-full pointer-events-none z-50;
-  }
-
-  /* グラスモーフィズム効果 */
-  .glass {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl;
-  }
-
-  /* ボタンスタイル */
-  .btn-primary {
-    @apply px-6 py-3 bg-gradient-to-r from-cookie-500 to-cookie-600 hover:from-cookie-600 hover:to-cookie-700 text-white font-bold rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer;
-  }
-
-  .btn-secondary {
-    @apply px-6 py-3 glass hover:bg-white/20 text-white font-semibold rounded-xl transform transition-all duration-200 hover:scale-105 cursor-pointer;
-  }
-
-  /* カードスタイル */
-  .card {
-    @apply glass p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl;
-  }
-
-  /* スコア表示 */
-  .score-display {
-    @apply text-6xl font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent animate-pulse;
-  }
-
-  /* タイピング単語表示 */
-  .word-display {
-    @apply text-5xl font-mono tracking-wider;
-  }
-
-  .word-typed {
-    @apply text-green-400;
-  }
-
-  .word-untyped {
-    @apply text-white/60;
-  }
-
-  /* プログレスバー */
-  .progress-bar {
-    @apply h-4 bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-100;
-  }
-
-  .progress-bar-danger {
-    @apply bg-gradient-to-r from-red-500 to-orange-500 animate-pulse-fast;
-  }
-
-  /* コンボ表示 */
-  .combo-display {
-    @apply text-3xl font-bold text-yellow-400 animate-bounce-slow;
-  }
-
-  /* クリティカルヒット演出 */
-  .critical-hit {
-    @apply text-7xl font-black text-red-500 animate-shake;
-  }
-
-  /* ミスタイプペナルティ */
-  .miss-penalty {
-    @apply fixed inset-0 bg-red-500/30 pointer-events-none animate-pulse-fast;
-  }
-
-  /* 数値表記 */
-  .number-notation {
-    @apply font-mono tabular-nums;
-  }
-
-  /* 画面振動エフェクト */
-  .screen-shake {
-    @apply animate-shake;
-  }
-}
-
-@layer utilities {
-  .hidden {
-    display: none;
-  }
+/* ユーティリティ */
+.hidden {
+  display: none;
 }

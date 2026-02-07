@@ -136,7 +136,10 @@ export const ROMAJI_MAP = {
     'っ': ['ltu', 'xtu'],
     'ゃ': ['lya', 'xya'],
     'ゅ': ['lyu', 'xyu'],
-    'ょ': ['lyo', 'xyo']
+    'ょ': ['lyo', 'xyo'],
+    'ー': ['-'],
+    ' ': [' '],
+    '　': [' ']
 };
 
 /**
@@ -149,6 +152,7 @@ export class RomajiTypingEngine {
         this.currentKanaIndex = 0;
         this.currentRomajiBuffer = '';
         this.possibleInputs = [];
+        this.fullRomajiGuide = []; // 各かな文字に対応するデフォルトのローマ字
     }
 
     /**
@@ -158,7 +162,49 @@ export class RomajiTypingEngine {
         this.targetText = text;
         this.currentKanaIndex = 0;
         this.currentRomajiBuffer = '';
+        this.generateFullGuide();
         this.updatePossibleInputs();
+    }
+
+    /**
+     * テキスト全体のデフォルトローマ字ガイドを生成
+     */
+    generateFullGuide() {
+        this.fullRomajiGuide = [];
+        let i = 0;
+        while (i < this.targetText.length) {
+            const twoChar = this.targetText.substring(i, i + 2);
+            if (ROMAJI_MAP[twoChar]) {
+                this.fullRomajiGuide.push({ kana: twoChar, romaji: ROMAJI_MAP[twoChar][0] });
+                i += 2;
+                continue;
+            }
+
+            const oneChar = this.targetText[i];
+            if (ROMAJI_MAP[oneChar]) {
+                // 促音「っ」＋次の文字のパターンの場合、ガイドを調整
+                if (oneChar === 'っ' && i + 1 < this.targetText.length) {
+                    const nextChar = this.targetText[i + 1];
+                    const nextTwo = this.targetText.substring(i + 1, i + 3);
+                    let nextRomaji = '';
+                    if (ROMAJI_MAP[nextTwo]) {
+                        nextRomaji = ROMAJI_MAP[nextTwo][0];
+                    } else if (ROMAJI_MAP[nextChar]) {
+                        nextRomaji = ROMAJI_MAP[nextChar][0];
+                    }
+
+                    if (nextRomaji) {
+                        this.fullRomajiGuide.push({ kana: 'っ', romaji: nextRomaji[0] });
+                        i++;
+                        continue;
+                    }
+                }
+                this.fullRomajiGuide.push({ kana: oneChar, romaji: ROMAJI_MAP[oneChar][0] });
+            } else {
+                this.fullRomajiGuide.push({ kana: oneChar, romaji: oneChar });
+            }
+            i++;
+        }
     }
 
     /**
