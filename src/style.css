@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen text-white;
+  }
+}
+
+@layer components {
+
+  /* パーティクルエフェクト用のキャンバス */
+  #particles-canvas {
+    @apply fixed top-0 left-0 w-full h-full pointer-events-none z-50;
+  }
+
+  /* グラスモーフィズム効果 */
+  .glass {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl;
+  }
+
+  /* ボタンスタイル */
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-cookie-500 to-cookie-600 hover:from-cookie-600 hover:to-cookie-700 text-white font-bold rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 glass hover:bg-white/20 text-white font-semibold rounded-xl transform transition-all duration-200 hover:scale-105 cursor-pointer;
+  }
+
+  /* カードスタイル */
+  .card {
+    @apply glass p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl;
+  }
+
+  /* スコア表示 */
+  .score-display {
+    @apply text-6xl font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent animate-pulse;
+  }
+
+  /* タイピング単語表示 */
+  .word-display {
+    @apply text-5xl font-mono tracking-wider;
+  }
+
+  .word-typed {
+    @apply text-green-400;
+  }
+
+  .word-untyped {
+    @apply text-white/60;
+  }
+
+  /* プログレスバー */
+  .progress-bar {
+    @apply h-4 bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-100;
+  }
+
+  .progress-bar-danger {
+    @apply bg-gradient-to-r from-red-500 to-orange-500 animate-pulse-fast;
+  }
+
+  /* コンボ表示 */
+  .combo-display {
+    @apply text-3xl font-bold text-yellow-400 animate-bounce-slow;
+  }
+
+  /* クリティカルヒット演出 */
+  .critical-hit {
+    @apply text-7xl font-black text-red-500 animate-shake;
+  }
+
+  /* ミスタイプペナルティ */
+  .miss-penalty {
+    @apply fixed inset-0 bg-red-500/30 pointer-events-none animate-pulse-fast;
+  }
+
+  /* 数値表記 */
+  .number-notation {
+    @apply font-mono tabular-nums;
+  }
+
+  /* 画面振動エフェクト */
+  .screen-shake {
+    @apply animate-shake;
+  }
+}
+
+@layer utilities {
+  .hidden {
+    display: none;
+  }
+}
