@@ -5,7 +5,7 @@ import { ScoreCalculator, formatNumber } from './engine/scoreCalculator.js';
 import { ParticleSystem } from './effects/particles.js';
 import { SHOP_ITEMS, purchaseItem, getItemPrice, canPurchase } from './systems/shop.js';
 import { CardDraft } from './systems/cardDraft.js';
-import { getRarityColor } from './data/cards.js';
+import { DRAFT_CARDS, getRandomCards, getRarityColor, RARITIES } from './data/cards.js';
 import { getRandomJapaneseWord } from './data/japaneseWords.js';
 import Decimal from 'break_infinity.js';
 
@@ -133,9 +133,10 @@ class Game {
    * 新しい単語を取得
    */
   getNewWord() {
-    const { word, multiplier } = getRandomJapaneseWord(this.gameState.unlockedWordLists);
+    const { word, multiplier, level } = getRandomJapaneseWord(this.gameState.unlockedWordLists);
     this.romajiEngine.setText(word);
     this.currentWordMultiplier = multiplier;
+    this.currentWordLevel = level;
   }
 
   /**
@@ -168,6 +169,15 @@ class Game {
     // 正解
     this.totalCharsTyped++;
     this.recentKeyPresses.push(Date.now());
+
+    // クッキーのクリックリアクション演出
+    const cookieImg = document.getElementById('cookie-image');
+    if (cookieImg) {
+      cookieImg.classList.remove('click-reaction');
+      // ブラウザに再レンダリングを強制させるためのリフロー
+      void cookieImg.offsetWidth;
+      cookieImg.classList.add('click-reaction');
+    }
 
     // 古いキープレス記録を削除（1秒以内のみ保持）
     const now = Date.now();
@@ -218,6 +228,14 @@ class Game {
       // 単語完成
       if (result.completed) {
         this.scoreCalculator.incrementWordMastery(this.romajiEngine.targetText);
+
+        // 単語完了ボーナスの付与
+        const wordBonus = this.gameState.calculateWordBonus(this.currentWordLevel);
+        this.gameState.totalCookies = this.gameState.totalCookies.add(wordBonus);
+
+        // ボーナス演出（少し上またはメインクッキー付近に表示）
+        this.particles.createScorePopup(centerX, centerY - 40, `+${formatNumber(wordBonus)} BONUS`, false);
+
         this.getNewWord();
       }
     }
@@ -398,7 +416,9 @@ class Game {
       const card = document.createElement('div');
       card.className = `card ${!canBuy || purchased ? 'opacity-50' : ''}`;
       card.innerHTML = `
-        <div class="text-6xl mb-4">${item.icon}</div>
+        <div class="mb-4">
+          <img src="/img/icon/${item.icon}" alt="${item.name}" class="w-16 h-16 mx-auto object-contain">
+        </div>
         <h3 class="text-2xl font-bold mb-2">${item.name}</h3>
         <p class="text-white/70 mb-4">${item.description}</p>
         <div class="text-xl font-bold number-notation mb-4">
@@ -433,12 +453,23 @@ class Game {
     container.innerHTML = '';
 
     cards.forEach((card, index) => {
-      const rarityColor = getRarityColor(card.rarity);
+      const rarityConfig = RARITIES[card.rarity] || RARITIES.N;
       const cardEl = document.createElement('div');
-      cardEl.className = 'card cursor-pointer';
+
+      // レアリティに応じた演出クラス
+      let rarityClasses = '';
+      if (card.rarity === 'SR') rarityClasses = 'card-shimmer glow-sr';
+      else if (card.rarity === 'SSR') rarityClasses = 'card-shimmer glow-ssr';
+      else if (card.rarity === 'UR') rarityClasses = 'card-shimmer glow-ur';
+
+      cardEl.className = `card cursor-pointer transform transition-all hover:scale-105 ${rarityClasses}`;
       cardEl.innerHTML = `
-        <div class="bg-gradient-to-r ${rarityColor} text-white px-4 py-2 rounded-t-xl -mx-6 -mt-6 mb-4">
-          <span class="text-sm uppercase tracking-wide">${card.rarity}</span>
+        <div class="bg-gradient-to-r ${rarityConfig.color} text-white px-4 py-2 rounded-t-xl -mx-6 -mt-6 mb-4 flex justify-between items-center">
+          <span class="text-sm font-bold tracking-widest">${rarityConfig.label}</span>
+          <span class="text-xs opacity-80 uppercase">Card</span>
+        </div>
+        <div class="mb-4 text-center">
+          <img src="/img/icon/${card.icon}" alt="${card.name}" class="w-20 h-20 mx-auto object-contain">
         </div>
         <h3 class="text-2xl font-bold mb-4">${card.name}</h3>
         <p class="text-white/80">${card.description}</p>

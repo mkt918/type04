@@ -137,6 +137,7 @@ export function getRandomJapaneseWord(unlockedLevels) {
 
     return {
         word: randomWord,
-        multiplier: wordList.multiplier
+        multiplier: wordList.multiplier,
+        level: parseInt(randomLevel.replace('level', ''))
     };
 }

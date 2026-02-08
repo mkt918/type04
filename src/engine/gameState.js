@@ -33,7 +33,8 @@ export class GameState {
             wordList2: false,
             wordList3: false,
             wordList4: false,
-            wordList5: false
+            wordList5: false,
+            sugar: 0      // 魔法の砂糖（完了ボーナス強化）
         };
 
         // 解放済みワードリスト
@@ -75,10 +76,22 @@ export class GameState {
     }
 
     /**
+     * 単語完了ボーナスを計算
+     * @param {number} level - ワードリストのレベル
+     */
+    calculateWordBonus(level) {
+        // ベースボーナス = レベル (1, 2, 3, 4, 5)
+        // 強化アイテム「魔法の砂糖」1つにつき+20% (つまり +0.2*レベル)
+        const bonusPerLevel = new Decimal(level);
+        const multiplier = 1 + (this.shopPurchases.sugar * 0.2);
+        return bonusPerLevel.mul(multiplier);
+    }
+
+    /**
      * クリティカル率を計算
      */
     calculateCriticalRate() {
-        let rate = this.criticalRate + (this.shopPurchases.butter * 0.01);
+        let rate = this.criticalRate + (this.shopPurchases.butter * 0.002); // 1回+0.2%
 
         // カード効果
         const hasCriticalSurge = this.activeCards.some(card => card.id === 'critical_surge');
@@ -93,7 +106,7 @@ export class GameState {
      * クリティカル倍率を計算
      */
     calculateCriticalMultiplier() {
-        let multiplier = this.criticalMultiplier + (this.shopPurchases.butter * 2);
+        let multiplier = this.criticalMultiplier + (this.shopPurchases.butter * 0.5); // 1回+0.5
 
         // カード効果
         const hasCriticalSurge = this.activeCards.some(card => card.id === 'critical_surge');

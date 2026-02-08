@@ -75,10 +75,12 @@
           <p id="total-cookies" class="score-display">0</p>
         </div>
 
-        <!-- 巨大クッキー -->
         <div class="relative mb-12">
-          <div id="cookie-image"
-            class="w-64 h-64 rounded-full bg-gradient-to-br from-cookie-300 to-cookie-600 shadow-2xl animate-float">
+          <img id="cookie-image" src="/img/cookie.png" alt="Cookie"
+            class="w-64 h-64 rounded-full shadow-2xl animate-float object-cover border-4 border-cookie-300/30"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <div
+            class="w-64 h-64 rounded-full bg-gradient-to-br from-cookie-300 to-cookie-600 shadow-2xl animate-float hidden">
           </div>
           <!-- クリティカルヒット表示 -->
           <div id="critical-display" class="hidden absolute inset-0 flex items-center justify-center">

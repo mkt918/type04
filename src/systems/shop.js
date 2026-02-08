@@ -11,12 +11,12 @@ export const SHOP_ITEMS = {
         id: 'oven',
         name: 'プロフェッショナル・オーブン',
         description: '基礎CpCを+10増加',
-        icon: '🔥',
-        basePrice: 100,
-        priceMultiplier: 1.15,
+        icon: 'campfire.png',
+        basePrice: 50,
+        priceMultiplier: 1.1,
         effect: (gameState) => {
             gameState.shopPurchases.oven++;
-            gameState.baseCpC = gameState.baseCpC.add(10);
+            gameState.baseCpC = gameState.baseCpC.add(1);
         }
     },
 
@@ -24,9 +24,9 @@ export const SHOP_ITEMS = {
         id: 'mixer',
         name: '精密ミキサー',
         description: 'ミスペナルティ時間を-0.05秒短縮',
-        icon: '🥄',
-        basePrice: 500,
-        priceMultiplier: 1.2,
+        icon: 'bubbling-bowl.png',
+        basePrice: 200,
+        priceMultiplier: 1.15,
         effect: (gameState) => {
             gameState.shopPurchases.mixer++;
         }
@@ -36,9 +36,9 @@ export const SHOP_ITEMS = {
         id: 'butter',
         name: '高純度バター',
         description: 'クリティカル率+1%、倍率+2',
-        icon: '🧈',
-        basePrice: 1000,
-        priceMultiplier: 1.25,
+        icon: 'cheese-wedge.png',
+        basePrice: 400,
+        priceMultiplier: 1.2,
         effect: (gameState) => {
             gameState.shopPurchases.butter++;
             gameState.criticalRate += 0.01;
@@ -50,7 +50,7 @@ export const SHOP_ITEMS = {
         id: 'wordList2',
         name: JAPANESE_WORD_LISTS.level2.name,
         description: `倍率${JAPANESE_WORD_LISTS.level2.multiplier}xの単語が出現`,
-        icon: '📖',
+        icon: 'book-cover.png',
         basePrice: JAPANESE_WORD_LISTS.level2.cost,
         priceMultiplier: 1,
         oneTime: true,
@@ -64,7 +64,7 @@ export const SHOP_ITEMS = {
         id: 'wordList3',
         name: JAPANESE_WORD_LISTS.level3.name,
         description: `倍率${JAPANESE_WORD_LISTS.level3.multiplier}xの単語が出現`,
-        icon: '📚',
+        icon: 'open-book.png',
         basePrice: JAPANESE_WORD_LISTS.level3.cost,
         priceMultiplier: 1,
         oneTime: true,
@@ -79,7 +79,7 @@ export const SHOP_ITEMS = {
         id: 'wordList4',
         name: JAPANESE_WORD_LISTS.level4.name,
         description: `倍率${JAPANESE_WORD_LISTS.level4.multiplier}xの単語が出現`,
-        icon: '📕',
+        icon: 'burning-book.png',
         basePrice: JAPANESE_WORD_LISTS.level4.cost,
         priceMultiplier: 1,
         oneTime: true,
@@ -94,7 +94,7 @@ export const SHOP_ITEMS = {
         id: 'wordList5',
         name: JAPANESE_WORD_LISTS.level5.name,
         description: `倍率${JAPANESE_WORD_LISTS.level5.multiplier}xの単語が出現`,
-        icon: '📜',
+        icon: 'scroll-unfurled.png',
         basePrice: JAPANESE_WORD_LISTS.level5.cost,
         priceMultiplier: 1,
         oneTime: true,
@@ -102,6 +102,18 @@ export const SHOP_ITEMS = {
         effect: (gameState) => {
             gameState.shopPurchases.wordList5 = true;
             gameState.unlockedWordLists.push('level5');
+        }
+    },
+
+    sugar: {
+        id: 'sugar',
+        name: '魔法の砂糖',
+        description: '単語完了時のボーナスクッキーを+20%増加',
+        icon: 'salt-shaker.png',
+        basePrice: 100,
+        priceMultiplier: 1.3,
+        effect: (gameState) => {
+            gameState.shopPurchases.sugar++;
         }
     }
 };
